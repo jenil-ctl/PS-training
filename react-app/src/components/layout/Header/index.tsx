@@ -2,8 +2,8 @@ import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 import { routes } from "../../../config/routes.config";
-import logo from "../../../assets/images/png/logo_2x.png";
-import cart from "../../../assets/images/svg/cart.svg";
+import logo from "../../../static/images/logo_2x.png";
+import cart from "../../../static/images/cart.svg";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
