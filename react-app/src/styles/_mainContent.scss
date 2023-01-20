@@ -6,4 +6,8 @@
   width: calc(100vw - 80px);
   position: relative;
   max-width: 1900px;
+
+  @include respond(mobile) {
+    width: 100vw;
+  }
 }
