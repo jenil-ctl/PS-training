@@ -40,7 +40,7 @@ const Home: React.FC = () => {
   }, []);
 
   return (
-    <div className="banners">
+    <div className="home__wrapper">
       <Slider data={bannersData} />
       {categories.length > 0 &&
         categories.map((item: any) => {
@@ -50,7 +50,7 @@ const Home: React.FC = () => {
 
           if (item.imageUrl === undefined) return "";
           return (
-            <div className="banner" key={item?.id}>
+            <div className="home__container" key={item?.id}>
               <img
                 src={
                   imagePath
@@ -58,9 +58,9 @@ const Home: React.FC = () => {
                     : require(`../../static/images/category/baby.png`)
                 }
                 alt={item?.name}
-                className="banner__img"
+                className="home__container__img"
               />
-              <div className="banner__details">
+              <div className="home__container__details">
                 <h3 className="heading-3">{item?.name}</h3>
                 <p className="paragraph paragraph--p1">{item?.description}</p>
                 <button className="btn btn--explore">
