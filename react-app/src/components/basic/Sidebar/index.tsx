@@ -65,7 +65,7 @@ const Sidebar: React.FC<IsidebarProps> = ({
         {data.map((data: ICategoriesData, index: number) => {
           if (data.imageUrl === undefined) return "";
           return (
-            <option value={index} key={index}>
+            <option value={data?.id} key={index}>
               {data.name}
             </option>
           );

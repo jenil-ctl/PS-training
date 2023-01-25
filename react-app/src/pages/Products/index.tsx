@@ -1,10 +1,9 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import { MyGlobalContext } from "../../App";
 import { Sidebar } from "../../components/basic";
+import { MyGlobalContext } from "../../context/myGLobalContext";
 import { useFirstRender } from "../../hooks";
-import { ICategoriesData } from "../Home";
 
 export type ProductsData = {
   name: string;
@@ -18,22 +17,22 @@ export type ProductsData = {
 };
 
 const Products: React.FC = () => {
-  let query = useLocation();
-  let id = new URLSearchParams(query.search).get("id");
+  const query = useLocation();
+  const id = new URLSearchParams(query.search).get("id");
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const {
     categoriesData,
     setCategoriesData,
     productsData,
     setAllProductsData,
+    cartData,
+    setCartData,
   } = React.useContext(MyGlobalContext);
   const [activeElement, setActiveElement] = React.useState<string>("0");
   const [filteredProductsData, setFilteredProducsData] = React.useState(
     [] as ProductsData[]
-  );
-
-  let categoryIds: string[] = categoriesData.map(
-    (data: ICategoriesData) => data?.id
   );
 
   const getAllCategories = async () => {
@@ -68,12 +67,19 @@ const Products: React.FC = () => {
       temp = productsData?.filter(
         (data: ProductsData) => data?.category === filterKey
       );
+      navigate(`${location.pathname}?id=${filterKey}`, { replace: true });
     }
     setActiveElement(filterKey);
     setFilteredProducsData(temp);
   };
 
-  const handleAddToCart = (item: ProductsData) => {};
+  const handleAddToCart = (id: string) => {
+    const index = productsData.findIndex((obj) => obj?.id === id);
+    productsData[index].stock -= 1;
+    const tempData = productsData?.filter((data) => data.id === id)[0];
+    const selectedProduct = { ...tempData, quantity: 1 };
+    setCartData([...cartData, selectedProduct]);
+  };
 
   useFirstRender(() => {
     getAllProducts();
@@ -109,6 +115,9 @@ const Products: React.FC = () => {
             imagePath[imagePath?.length - 2] +
             "/" +
             imagePath[imagePath?.length - 1];
+          const isAddedToCart =
+            cartData?.filter((data) => data?.id === item?.id)?.length > 0 &&
+            item?.stock > 0;
           return (
             <div className="card product" key={`card-${i}`}>
               <h4 className="heading-4 product__heading">{item?.name}</h4>
@@ -124,9 +133,15 @@ const Products: React.FC = () => {
                   <button
                     className="product__btn btn btn--explore"
                     disabled={item.stock <= 0}
-                    onClick={() => item.stock > 0 && handleAddToCart(item)}
+                    onClick={() =>
+                      !isAddedToCart &&
+                      item.stock > 0 &&
+                      handleAddToCart(item?.id)
+                    }
                   >
-                    {item.stock > 0 ? (
+                    {isAddedToCart ? (
+                      "Added to Cart"
+                    ) : item.stock > 0 ? (
                       <>
                         Buy Now{" "}
                         <span className="product__btn--cost">
